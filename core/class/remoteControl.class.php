@@ -29,7 +29,7 @@ class remoteControl extends eqLogic {
   /* Fonction appelé par Listener
    */
   public static function pullRefresh($_option) {
-    //log::add(PLUGIN_NAME, 'debug', 'pullRefresh started'. json_encode($_option));
+    log::add(PLUGIN_NAME, 'debug', 'pullRefresh started'. json_encode($_option));
 
     $eqLogic = self::byId($_option['id']);
     if (is_object($eqLogic) && $eqLogic->getIsEnable() == 1) {
@@ -132,6 +132,7 @@ class remoteControl extends eqLogic {
     $cmd_lamp = str_replace('#', '', $cmd_lamp);
     $cmd_lamp = cmd::byId($cmd_lamp);
     if (!is_object($cmd_lamp)) {
+      log::add(PLUGIN_NAME, 'error', ' commande cmd_lamp non trouvé');
       throw new Exception("cmd_lamp non renseigné");
     }
     //log::add(PLUGIN_NAME, 'debug', ' cmd_lamp='.$cmd_lamp->getHumanName());
@@ -139,29 +140,41 @@ class remoteControl extends eqLogic {
     
     // toggle
     if ($_option['value'] == 'toggle') {
-      $this->toggle(($eqlogic_lamp));
+      $this->toggle($eqlogic_lamp);
     }
 
     // on
     if ($_option['value'] == 'on_press') {
-      $this->turnOn(($eqlogic_lamp));
+      $this->turnOn($eqlogic_lamp);
     }
 
     // off
     if ($_option['value'] == 'off_press') {
-      $this->turnOff(($eqlogic_lamp));
+      $this->turnOff($eqlogic_lamp);
     }
 
     // brightness_down
     if ($_option['value'] == 'down_press' ||
         $_option['value'] == 'brightness_down_click') {
-      $this->brightnessDown(($eqlogic_lamp));
+      $this->brightness($eqlogic_lamp, -10);
     }
 
     // brightness_up
     if ($_option['value'] == 'up_press' ||
         $_option['value'] == 'brightness_up_click') {
-      $this->brightnessUp(($eqlogic_lamp));
+      $this->brightness($eqlogic_lamp, +10);
+    }
+
+    // brightness_down_release
+    if ($_option['value'] == 'down_hold' ||
+        $_option['value'] == 'brightness_down_hold') {
+      $this->brightness($eqlogic_lamp, -1);
+    }
+
+    // brightness_up_release
+    if ($_option['value'] == 'up_hold' ||
+        $_option['value'] == 'brightness_up_hold') {
+      $this->brightness($eqlogic_lamp, +1);
     }
   }
 
@@ -172,7 +185,8 @@ class remoteControl extends eqLogic {
     // Recherche LIGHT_TOGGLE
     $cmd_toggle = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_TOGGLE');
     if ($cmd_toggle == null) {
-      log::add(PLUGIN_NAME, 'debug', ' commande LIGHT_TOGGLE non trouvée');      
+      log::add(PLUGIN_NAME, 'error', ' commande LIGHT_TOGGLE non trouvée');
+      throw new Exception("commande LIGHT_TOGGLE non trouvée");
     } else {
       log::add(PLUGIN_NAME, 'debug', ' cmd_toggle='.$cmd_toggle->getHumanName());
       
@@ -184,7 +198,8 @@ class remoteControl extends eqLogic {
     $lamp_state = 0;
     $cmd_state = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_STATE');
     if ($cmd_state == null) {
-      log::add(PLUGIN_NAME, 'debug', ' commande LIGHT_STATE non trouvée');      
+      log::add(PLUGIN_NAME, 'error', ' commande LIGHT_STATE non trouvée');      
+      throw new Exception("commande LIGHT_STATE non trouvée");
     } else {
       log::add(PLUGIN_NAME, 'debug', ' cmd_state='.$cmd_state->getHumanName());
       $lamp_state = $cmd_state->execCmd();
@@ -205,7 +220,8 @@ class remoteControl extends eqLogic {
     // Recherche LIGHT_ON
     $cmd_lamp_on = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_ON');
     if ($cmd_lamp_on == null) {
-      log::add(PLUGIN_NAME, 'debug', ' commande LIGHT_ON non trouvée');      
+      log::add(PLUGIN_NAME, 'error', ' commande LIGHT_ON non trouvée');
+      throw new Exception("commande LIGHT_ON non trouvée");
     } else {
       log::add(PLUGIN_NAME, 'debug', ' cmd_lamp_on='.$cmd_lamp_on->getHumanName());
       $cmd_lamp_on->execCmd();
@@ -219,7 +235,8 @@ class remoteControl extends eqLogic {
     // Recherche LIGHT_OFF
     $cmd_lamp_off = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_OFF');
     if ($cmd_lamp_off == null) {
-      log::add(PLUGIN_NAME, 'debug', ' commande LIGHT_OFF non trouvée');      
+      log::add(PLUGIN_NAME, 'error', ' commande LIGHT_OFF non trouvée');
+      throw new Exception("commande LIGHT_OFF non trouvée");
     } else {
       log::add(PLUGIN_NAME, 'debug', ' cmd_lamp_off='.$cmd_lamp_off->getHumanName());
       $cmd_lamp_off->execCmd();
@@ -229,53 +246,31 @@ class remoteControl extends eqLogic {
   /**
    * Baisser la luminosité
    */
-  private function brightnessDown($eqlogic_lamp) {
+  private function brightness($eqlogic_lamp, $step) {
     $brightessValue = 0;
     // Recherche LIGHT_BRIGHTNESS
     $cmd_lamp_brightness = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_BRIGHTNESS');
     if ($cmd_lamp_brightness == null) {
-      log::add(PLUGIN_NAME, 'debug', ' commande LIGHT_BRIGHTNESS non trouvée');      
+      log::add(PLUGIN_NAME, 'error', ' commande LIGHT_BRIGHTNESS non trouvée');
+      throw new Exception("commande LIGHT_BRIGHTNESS non trouvée");
     } else {
       log::add(PLUGIN_NAME, 'debug', ' cmd_lamp_brightness='.$cmd_lamp_brightness->getHumanName());
       $brightessValue = $cmd_lamp_brightness->execCmd();
       log::add(PLUGIN_NAME, 'debug', ' brightessValue='.$brightessValue);
     }
+    $brightessValue = $brightessValue + $step;
 
     // Recherche LIGHT_SLIDER
     $cmd_lamp_slider = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_SLIDER');
     if ($cmd_lamp_slider == null) {
-      log::add(PLUGIN_NAME, 'debug', ' commande LIGHT_SLIDER non trouvée');      
+      log::add(PLUGIN_NAME, 'error', ' commande LIGHT_SLIDER non trouvée');
+      throw new Exception("commande LIGHT_SLIDER non trouvée");
     } else {
       log::add(PLUGIN_NAME, 'debug', ' LIGHT_SLIDER='.$cmd_lamp_slider->getHumanName());
-      $cmd_lamp_slider->execCmd(array('slider' => $brightessValue - 10, 'transition' => 300));
-      log::add(PLUGIN_NAME, 'debug', ' brightessValue='.$brightessValue);
-    }
-  }
-
-    /**
-   * Baisser la luminosité
-   */
-  private function brightnessUp($eqlogic_lamp) {
-    $brightessValue = 0;
-    // Recherche LIGHT_BRIGHTNESS
-    $cmd_lamp_brightness = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_BRIGHTNESS');
-    if ($cmd_lamp_brightness == null) {
-      log::add(PLUGIN_NAME, 'debug', ' commande LIGHT_BRIGHTNESS non trouvée');      
-    } else {
-      log::add(PLUGIN_NAME, 'debug', ' cmd_lamp_brightness='.$cmd_lamp_brightness->getHumanName());
-      $brightessValue = $cmd_lamp_brightness->execCmd();
+      $cmd_lamp_slider->execCmd(array('slider' => $brightessValue, 'transition' => 300));
       log::add(PLUGIN_NAME, 'debug', ' brightessValue='.$brightessValue);
     }
 
-    // Recherche LIGHT_SLIDER
-    $cmd_lamp_slider = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_SLIDER');
-    if ($cmd_lamp_slider == null) {
-      log::add(PLUGIN_NAME, 'debug', ' commande LIGHT_SLIDER non trouvée');      
-    } else {
-      log::add(PLUGIN_NAME, 'debug', ' LIGHT_SLIDER='.$cmd_lamp_slider->getHumanName());
-      $cmd_lamp_slider->execCmd(array('slider' => $brightessValue + 10, 'transition' => 300));
-      log::add(PLUGIN_NAME, 'debug', ' brightessValue='.$brightessValue);
-    }
   }
 
   /*     * **********************Getteur Setteur*************************** */
