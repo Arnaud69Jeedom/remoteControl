@@ -74,7 +74,6 @@ $eqLogics = eqLogic::byType($plugin->getId());
 			<li role="presentation"><a href="#" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fas fa-arrow-circle-left"></i></a></li>
 			<li role="presentation" class="active"><a href="#eqlogictab" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-tachometer-alt"></i> {{Equipement}}</a></li>
 			<li role="presentation"><a href="#lighttab" aria-controls="home" role="tab" data-toggle="tab"><i class="icon jeedom2-lightbulb25"></i> {{Lumières}}</a></li>
-			<li role="presentation"><a href="#commandtab" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-list"></i> {{Commandes}}</a></li>
 		</ul>
 		<div class="tab-content">
 			<!-- Onglet de configuration de l'équipement -->
@@ -151,10 +150,10 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						<div class="col-lg-11">
 							<legend><i class="icon jeedom2-lightbulb25"></i> {{Remote control}}</legend>
 							<div class="form-group">
-								<label class="col-sm-2 control-label">{{Toggle}}</label>
-								<div class="col-xs-11 col-sm-3">
+								<label class="col-sm-1 control-label">{{Remote}}</label>
+								<div class="col-xs-11 col-sm-4">
 									<div class="input-group">
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="toggle_cmd" data-concat="0" />
+										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_remote" data-concat="0" />
 										<span class="input-group-btn">
 											<a class="btn btn-default listCmdInfo">
 												<i class="fas fa-list-alt"></i>
@@ -162,16 +161,13 @@ $eqLogics = eqLogic::byType($plugin->getId());
 										</span>
 									</div>
 								</div>
+							</div>
 
-								<label class="col-sm-1 control-label">{{Valeur}}</label>
-								<div class="col-xs-4 col-sm-1">
-									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="toggle_value" data-concat="0" />
-								</div>
-
-								<label class="col-sm-1 control-label">{{Action}}</label>
+							<div class="form-group">
+								<label class="col-sm-1 control-label">{{Lampe}}</label>
 								<div class="col-xs-11 col-sm-4">
 									<div class="input-group">	
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="toggle_action" data-concat="0" />
+										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_lamp" data-concat="0" />
 										<span class="input-group-btn">
 											<a class="btn btn-default listCmdActionOther">
 												<i class="fas fa-list-alt"></i>
@@ -180,98 +176,11 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									</div>
 								</div>
 							</div>
-
-							<div class="form-group">
-								<label class="col-sm-2 control-label">{{Plus}}</label>
-								<div class="col-xs-11 col-sm-3">
-									<div class="input-group">
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="plus_cmd" data-concat="0" />
-										<span class="input-group-btn">
-											<a class="btn btn-default listCmdInfo">
-												<i class="fas fa-list-alt"></i>
-											</a>
-										</span>
-									</div>
-								</div>
-
-								<label class="col-sm-1 control-label">{{Valeur}}</label>
-								<div class="col-xs-4 col-sm-1">
-									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="plus_value" data-concat="0" />
-								</div>
-							
-								<label class="col-sm-1 control-label">{{Action}}</label>
-								<div class="col-xs-11 col-sm-4">
-									<div class="input-group">	
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="plus_action" data-concat="0" />
-										<span class="input-group-btn">
-											<a class="btn btn-default listCmdAction">
-												<i class="fas fa-list-alt"></i>
-											</a>
-										</span>
-									</div>
-								</div>
-							</div>
-
-							<div class="form-group">
-								<label class="col-sm-2 control-label">{{Moins}}</label>
-								<div class="col-xs-11 col-sm-3">
-									<div class="input-group">
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="minus_cmd" data-concat="0" />
-										<span class="input-group-btn">
-											<a class="btn btn-default listCmdInfo">
-												<i class="fas fa-list-alt"></i>
-											</a>
-										</span>
-									</div>
-								</div>
-
-								<label class="col-sm-1 control-label">{{Valeur}}</label>
-								<div class="col-xs-4 col-sm-1">
-									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="minus_value" data-concat="0" />
-								</div>
-
-								<label class="col-sm-1 control-label">{{Action}}</label>
-								<div class="col-xs-11 col-sm-4">
-									<div class="input-group">	
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="minus_action" data-concat="0" />
-										<span class="input-group-btn">
-											<a class="btn btn-default listCmdAction">
-												<i class="fas fa-list-alt"></i>
-											</a>
-										</span>
-									</div>
-								</div>
-						
-							</div>
-
-							
 						</div>						
 				     </fieldset>
 				</form>
 			</div><!-- /.tabpanel #lighttab-->
-
-			<!-- Onglet des commandes de l'équipement -->
-			<div role="tabpanel" class="tab-pane" id="commandtab">
-				<!-- <a class="btn btn-default btn-sm pull-right cmdAction" data-action="add" style="margin-top:5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une commande}}</a> -->
-				<br><br>
-				<div class="table-responsive">
-					<table id="table_cmd" class="table table-bordered table-condensed">
-						<thead>
-							<tr>
-								<th class="hidden-xs" style="min-width:50px;width:70px;">ID</th>
-								<th style="min-width:200px;width:350px;">{{Nom}}</th>
-								<th>{{Type}}</th>
-								<th style="min-width:260px;">{{Options}}</th>
-								<th>{{Etat}}</th>
-								<th style="min-width:80px;width:200px;">{{Actions}}</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
-				</div>
-			</div><!-- /.tabpanel #commandtab-->
-
+			
 		</div><!-- /.tab-content -->
 	</div><!-- /.eqLogic -->
 </div><!-- /.row row-overflow -->
