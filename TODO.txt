@@ -1,1 +1,46 @@
 Liste des choses à faire :
+
+-------------------------------------------------------------
+Analyse :
+
+- Mqtt dimmer :
+ Action : on_press/on_press/on_hold
+   off_press/off_press/off_hold
+   up_press, down_press
+
+- Mqtt Ikea 5 :
+   action
+    On/off :toggle
+    brightnes_up_click/_hold/_release
+    brightnes_down_click/_hold/_release
+    arrow_left_clik/...
+    arrow_right_click/...
+
+- MQtt radiateur :
+    action : on/vide
+    appui long : brightness_move_up/brightnes_stop
+
+- Théo Hue :
+    action : press_1, press_2...
+        release_1, release_2...
+        puis ""
+
+
+-----------------------------------------------------------
+
+- Zigbee dimmer : 
+ On: Etat = 1 si pressé + Type:0
+ Off: Etat = 4 si pressé + Type:2
+ Up: 2, 2 (rapide) / 2, 0: maintenu / 2,3: relaché
+ Down: 3, 2 / maintenu : 3,1 / relaché : 3, 3
+ Type = pressé ou relaché, longpress (3)
+
+- Zigbee Ikea :
+  On/off : Bouton 1 = 2
+  Up : Bouton2=1, Bouton2Mode = 6, 
+  + long press: Bouton2=MoveModeUp puis stop_with_on_off
+  Down : Bouton2=0, Bouton2Mode = 2
+  + long press: Bouton2=MoveModeDown puis 0
+  Gauche : Bouton=2583
+  Droite : Bouton=2573
+  + Bouton 3 long press = 33280 ou 33290

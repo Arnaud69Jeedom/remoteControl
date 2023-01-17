@@ -3,7 +3,7 @@ if (!isConnect('admin')) {
 	throw new Exception('{{401 - Accès non autorisé}}');
 }
 // Déclaration des variables obligatoires
-$plugin = plugin::byId('naturalLight');
+$plugin = plugin::byId('remoteControl');
 sendVarToJS('eqType', $plugin->getId());
 $eqLogics = eqLogic::byType($plugin->getId());
 ?>
@@ -28,7 +28,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 		<legend><i class="fas fa-table"></i> {{Mes lumières}}</legend>
 		<?php
 		if (count($eqLogics) == 0) {
-			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun équipement Natural Light trouvé, cliquer sur "Ajouter" pour commencer}}</div>';
+			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun équipement Remote Control trouvé, cliquer sur "Ajouter" pour commencer}}</div>';
 		} else {
 			// Champ de recherche
 			echo '<div class="input-group" style="margin:5px;">';
@@ -145,16 +145,64 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 			<!-- Onglet de configuration de l'équipement -->
 			<div role="tabpanel" class="tab-pane" id="lighttab">
-				<!-- Commande de la lumières -->
+				<!-- Commande de la remote -->
 				<form class="form-horizontal">
 					<fieldset>
-						<div class="col-lg-6">
-							<legend><i class="icon jeedom2-lightbulb25"></i> {{Lampes}}</legend>
+						<div class="col-lg-11">
+							<legend><i class="icon jeedom2-lightbulb25"></i> {{Remote control}}</legend>
 							<div class="form-group">
-								<label class="col-sm-4 control-label">{{Température couleur}}</label>
-								<div class="col-xs-11 col-sm-6">
+								<label class="col-sm-2 control-label">{{Toggle}}</label>
+								<div class="col-xs-11 col-sm-3">
 									<div class="input-group">
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="temperature_color" data-concat="0" />
+										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="toggle_cmd" data-concat="0" />
+										<span class="input-group-btn">
+											<a class="btn btn-default listCmdInfo">
+												<i class="fas fa-list-alt"></i>
+											</a>
+										</span>
+									</div>
+								</div>
+
+								<label class="col-sm-1 control-label">{{Valeur}}</label>
+								<div class="col-xs-4 col-sm-1">
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="toggle_value" data-concat="0" />
+								</div>
+
+								<label class="col-sm-1 control-label">{{Action}}</label>
+								<div class="col-xs-11 col-sm-4">
+									<div class="input-group">	
+										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="toggle_action" data-concat="0" />
+										<span class="input-group-btn">
+											<a class="btn btn-default listCmdActionOther">
+												<i class="fas fa-list-alt"></i>
+											</a>
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">{{Plus}}</label>
+								<div class="col-xs-11 col-sm-3">
+									<div class="input-group">
+										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="plus_cmd" data-concat="0" />
+										<span class="input-group-btn">
+											<a class="btn btn-default listCmdInfo">
+												<i class="fas fa-list-alt"></i>
+											</a>
+										</span>
+									</div>
+								</div>
+
+								<label class="col-sm-1 control-label">{{Valeur}}</label>
+								<div class="col-xs-4 col-sm-1">
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="plus_value" data-concat="0" />
+								</div>
+							
+								<label class="col-sm-1 control-label">{{Action}}</label>
+								<div class="col-xs-11 col-sm-4">
+									<div class="input-group">	
+										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="plus_action" data-concat="0" />
 										<span class="input-group-btn">
 											<a class="btn btn-default listCmdAction">
 												<i class="fas fa-list-alt"></i>
@@ -165,10 +213,10 @@ $eqLogics = eqLogic::byType($plugin->getId());
 							</div>
 
 							<div class="form-group">
-								<label class="col-sm-4 control-label">{{Lampe état}}</label>
-								<div class="col-xs-11 col-sm-6">
+								<label class="col-sm-2 control-label">{{Moins}}</label>
+								<div class="col-xs-11 col-sm-3">
 									<div class="input-group">
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="lamp_state" data-concat="0" />
+										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="minus_cmd" data-concat="0" />
 										<span class="input-group-btn">
 											<a class="btn btn-default listCmdInfo">
 												<i class="fas fa-list-alt"></i>
@@ -176,8 +224,28 @@ $eqLogics = eqLogic::byType($plugin->getId());
 										</span>
 									</div>
 								</div>
+
+								<label class="col-sm-1 control-label">{{Valeur}}</label>
+								<div class="col-xs-4 col-sm-1">
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="minus_value" data-concat="0" />
+								</div>
+
+								<label class="col-sm-1 control-label">{{Action}}</label>
+								<div class="col-xs-11 col-sm-4">
+									<div class="input-group">	
+										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="minus_action" data-concat="0" />
+										<span class="input-group-btn">
+											<a class="btn btn-default listCmdAction">
+												<i class="fas fa-list-alt"></i>
+											</a>
+										</span>
+									</div>
+								</div>
+						
 							</div>
-						</div>
+
+							
+						</div>						
 				     </fieldset>
 				</form>
 			</div><!-- /.tabpanel #lighttab-->
@@ -209,6 +277,6 @@ $eqLogics = eqLogic::byType($plugin->getId());
 </div><!-- /.row row-overflow -->
 
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
-<?php include_file('desktop', 'naturalLight', 'js', 'naturalLight');?>
+<?php include_file('desktop', 'remoteControl', 'js', 'remoteControl');?>
 <!-- Inclusion du fichier javascript du core - NE PAS MODIFIER NI SUPPRIMER -->
 <?php include_file('core', 'plugin.template', 'js');?>

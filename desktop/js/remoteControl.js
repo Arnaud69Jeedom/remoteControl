@@ -86,9 +86,10 @@ function addCmdToTable(_cmd) {
   })
 }
 
+/* toggle_cmd */
 $(".eqLogic").delegate(".listCmdInfo", 'click', function () {
-  var el = $(this).closest('.form-group').find('.eqLogicAttr');
-  jeedom.cmd.getSelectModal({cmd: {type: 'info',subType : 'binary'}}, function (result) {
+  var el = $(this).closest('.form-group').find('.eqLogicAttr').first();
+  jeedom.cmd.getSelectModal({cmd: {type: 'info'}}, function (result) {
     if (el.attr('data-concat') == 1) {
       el.atCaret('insert', result.human);
     } else {
@@ -97,10 +98,18 @@ $(".eqLogic").delegate(".listCmdInfo", 'click', function () {
   });
 });
 
+/* plus, minus action */
 $("body").on('click',".listCmdAction", function () {
-  var el = $(this).closest('.form-group').find('.eqLogicAttr');
+  var el = $(this).closest('.form-group').find('.eqLogicAttr').last();
   jeedom.cmd.getSelectModal({cmd: {type: 'action',subType : 'slider'}}, function (result) {
     el.value(result.human);
   });
 });
 
+/* toggle_action */
+$(".eqLogic").delegate(".listCmdActionOther", 'click', function () {
+  var el = $(this).closest('.form-group').find('.eqLogicAttr').last() ;
+    jeedom.cmd.getSelectModal({cmd: {type: 'action',subType : 'other'}}, function (result) {
+      el.value(result.human);
+  });
+});
