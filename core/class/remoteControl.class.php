@@ -21,6 +21,14 @@ require_once __DIR__  . '/../../../../core/php/core.inc.php';
 define('PLUGIN_NAME', 'remoteControl');
 
 class remoteControl extends eqLogic {
+  const cmd_toggle_array = ['toggle'];
+  const cmd_on_array = ['on_press'];
+  const cmd_off_array = ['off_press'];
+  const cmd_brightness_down_array = ['down_press', 'brightness_down_click'];
+  const cmd_brightness_up_array = ['up_press', 'brightness_up_click'];
+  const cmd_brightness_down_hold_array = ['down_hold', 'brightness_down_hold'];
+  const cmd_brightness_up_hold_array = ['up_hold', 'brightness_up_hold'];
+
   /*     * *************************Attributs****************************** */
 
   /*     * ***********************Methode static*************************** */
@@ -138,43 +146,42 @@ class remoteControl extends eqLogic {
     //log::add(PLUGIN_NAME, 'debug', ' cmd_lamp='.$cmd_lamp->getHumanName());
     $eqlogic_lamp = $cmd_lamp->getEqLogic();
     
+
+
+
     // toggle
-    if ($_option['value'] == 'toggle') {
+    if (in_array($_option['value'], remoteControl::cmd_toggle_array)) {
       $this->toggle($eqlogic_lamp);
     }
 
     // on
-    if ($_option['value'] == 'on_press') {
+    if (in_array($_option['value'], remoteControl::cmd_on_array)) {
       $this->turnOn($eqlogic_lamp);
     }
 
     // off
-    if ($_option['value'] == 'off_press') {
+    if (in_array($_option['value'], remoteControl::cmd_off_array)) {
       $this->turnOff($eqlogic_lamp);
     }
 
     // brightness_down
-    if ($_option['value'] == 'down_press' ||
-        $_option['value'] == 'brightness_down_click') {
-      $this->brightness($eqlogic_lamp, -10);
+    if (in_array($_option['value'], remoteControl::cmd_brightness_down_array)) {
+      $this->brightness($eqlogic_lamp, -10, 'once');
     }
 
     // brightness_up
-    if ($_option['value'] == 'up_press' ||
-        $_option['value'] == 'brightness_up_click') {
-      $this->brightness($eqlogic_lamp, +10);
+    if (in_array($_option['value'], remoteControl::cmd_brightness_up_array)) {
+      $this->brightness($eqlogic_lamp, 10, 'once');
     }
 
     // brightness_down_release
-    if ($_option['value'] == 'down_hold' ||
-        $_option['value'] == 'brightness_down_hold') {
-      $this->brightness($eqlogic_lamp, -1);
+    if (in_array($_option['value'], remoteControl::cmd_brightness_down_hold_array)) {
+      $this->brightness($eqlogic_lamp, -1, 'hold');
     }
 
     // brightness_up_release
-    if ($_option['value'] == 'up_hold' ||
-        $_option['value'] == 'brightness_up_hold') {
-      $this->brightness($eqlogic_lamp, +1);
+    if (in_array($_option['value'], remoteControl::cmd_brightness_up_hold_array)) {
+      $this->brightness($eqlogic_lamp, 1, 'hold');
     }
   }
 
@@ -246,7 +253,10 @@ class remoteControl extends eqLogic {
   /**
    * Baisser la luminosité
    */
-  private function brightness($eqlogic_lamp, $step) {
+  private function brightness($eqlogic_lamp, $step, $type) {
+    log::add(PLUGIN_NAME, 'debug', ' type:'.$type);
+
+
     $brightessValue = 0;
     // Recherche LIGHT_BRIGHTNESS
     $cmd_lamp_brightness = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_BRIGHTNESS');
@@ -256,21 +266,71 @@ class remoteControl extends eqLogic {
     } else {
       log::add(PLUGIN_NAME, 'debug', ' cmd_lamp_brightness='.$cmd_lamp_brightness->getHumanName());
       $brightessValue = $cmd_lamp_brightness->execCmd();
-      log::add(PLUGIN_NAME, 'debug', ' brightessValue='.$brightessValue);
+      log::add(PLUGIN_NAME, 'debug', ' LIGHT_BRIGHTNESS='.$brightessValue);
     }
-    $brightessValue = $brightessValue + $step;
 
     // Recherche LIGHT_SLIDER
     $cmd_lamp_slider = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_SLIDER');
     if ($cmd_lamp_slider == null) {
       log::add(PLUGIN_NAME, 'error', ' commande LIGHT_SLIDER non trouvée');
       throw new Exception("commande LIGHT_SLIDER non trouvée");
-    } else {
-      log::add(PLUGIN_NAME, 'debug', ' LIGHT_SLIDER='.$cmd_lamp_slider->getHumanName());
-      $cmd_lamp_slider->execCmd(array('slider' => $brightessValue, 'transition' => 300));
-      log::add(PLUGIN_NAME, 'debug', ' brightessValue='.$brightessValue);
+    } 
+    // else {
+    //   log::add(PLUGIN_NAME, 'debug', ' LIGHT_SLIDER='.$cmd_lamp_slider->getHumanName());
+    //   $cmd_lamp_slider->execCmd(array('slider' => $brightessValue, 'transition' => 300));
+    //   log::add(PLUGIN_NAME, 'debug', ' brightessValue='.$brightessValue);
+    // }
+
+    // Telecommande
+    $cmd_remote = $this->getConfiguration('cmd_remote');
+    $cmd_remote = str_replace('#', '', $cmd_remote);
+    $cmd_remote = cmd::byId($cmd_remote);
+    if (!is_object($cmd_remote)) {
+      log::add(PLUGIN_NAME, 'error', ' commande cmd_remote non trouvé');
+      throw new Exception("cmd_remote non renseigné");
     }
 
+    // PRESS
+    if ($type == 'once') {
+      $brightessValue += $step;
+      $brightessValue = max($brightessValue, 0);
+      $brightessValue = min($brightessValue, 255);
+      log::add(PLUGIN_NAME, 'debug', ' $brightessValue:'.$brightessValue);
+      $cmd_lamp_slider->execCmd(array('slider' => $brightessValue, 'transition' => 300));
+    }
+    
+    // HOLD
+    if ($type == 'hold') {
+      // Nouvelle valeur
+      //$brightessValue += $step;
+
+      // Action
+      $command = $cmd_remote->execCmd();
+      $sign = $step <=> 0;
+      while (
+        in_array($command, remoteControl::cmd_brightness_down_hold_array) || 
+        in_array($command, remoteControl::cmd_brightness_up_hold_array)
+       )
+      {
+        $command = $cmd_remote->execCmd();
+
+        $brightessValue += $step;
+        $brightessValue = max($brightessValue, 0);
+        $brightessValue = min($brightessValue, 255);
+        //log::add(PLUGIN_NAME, 'debug', ' command: '.$command);
+        log::add(PLUGIN_NAME, 'debug', ' brightessValue: '.$brightessValue);
+        
+        $cmd_lamp_slider->execCmd(array('slider' => $brightessValue, 'transition' => 300));        
+
+        $step *= 2;
+        if (abs($step) >= 20) {
+          $step = $sign * 20;
+        }
+        log::add(PLUGIN_NAME, 'debug', ' step: '.$step);
+
+        sleep(1);
+      }
+    }
   }
 
   /*     * **********************Getteur Setteur*************************** */
