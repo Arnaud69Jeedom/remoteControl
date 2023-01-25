@@ -150,8 +150,13 @@ class remoteControl extends eqLogic {
     //log::add(PLUGIN_NAME, 'debug', ' cmd_lamp='.$cmd_lamp->getHumanName());
     $eqlogic_lamp = $cmd_lamp->getEqLogic();
     
+    // Valeur commande optionnelle
+    $cmd_value = $this->getConfiguration('cmd_value');
+
     // toggle
-    if (in_array($_option['value'], remoteControl::cmd_toggle_array)) {
+    if (in_array($_option['value'], remoteControl::cmd_toggle_array) || 
+        (!empty($cmd_value) && $_option['value'] == $cmd_value)
+     ) {
       $this->toggle($eqlogic_lamp);
     }
 

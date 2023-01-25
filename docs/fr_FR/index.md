@@ -38,7 +38,14 @@ Il faut alors renseigner 2 informations :
 - Remote : la commande 'action' de la télécommande,
 - Lampe : la commandede la lampe pour le toogle.
 
+Il existe une valeur optionnelle à renseigner :
+- Valeur : Indiquer la valeur à prendre en compte.
+   Exemple : le Hue Switch sur un interrupteur 2 boutons va envoyer l'action left_press et right_press.
+   Il peut être souhaité de n'agir uniquement lorsque le bouton gauche est pressé concernant cette lampe.
+
+
 NOTE : 
 - Les types génériques de la lampes doivent être renseignés (LIGHT_TOGGLE, LIGHT_ON, LIGHT_OFF, LIGHT_STATE, LIGHT_BRIGHTNESS, LIGHT_SLIDER, LIGHT_COLOR_TEMP, LIGHT_SET_COLOR_TEMP)
+Ceci est fait automatiquement sur les équipements ZigbeeLinker.
 
 ![Configuration Plugin](../images/Equipement_Lumieres.png)

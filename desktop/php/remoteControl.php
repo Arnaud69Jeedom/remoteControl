@@ -149,31 +149,53 @@ $eqLogics = eqLogic::byType($plugin->getId());
 					<fieldset>
 						<div class="col-lg-11">
 							<legend><i class="icon jeedom2-lightbulb25"></i> {{Remote control}}</legend>
-							<div class="form-group">
-								<label class="col-sm-1 control-label">{{Remote}}</label>
-								<div class="col-xs-11 col-sm-4">
-									<div class="input-group">
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_remote" data-concat="0" />
-										<span class="input-group-btn">
-											<a class="btn btn-default listCmdInfo">
-												<i class="fas fa-list-alt"></i>
-											</a>
-										</span>
+							
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Remote</label>
+										<div class="col-xs-11 col-sm-8">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_remote" data-concat="0">
+												<span class="input-group-btn">
+													<a class="btn btn-default listCmdInfo">
+														<i class="fas fa-list-alt"></i>
+													</a>
+												</span>
+											</div>
+										</div>
 									</div>
 								</div>
+							
+							
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">{{Valeur (optionnel)}}</label>
+										<div class="col-xs-11 col-sm-4">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_value" data-concat="0" />										
+											</div>
+										</div>
+										Valeur à surveiller
+									</div>																
+								</div>
 							</div>
-
-							<div class="form-group">
-								<label class="col-sm-1 control-label">{{Lampe}}</label>
-								<div class="col-xs-11 col-sm-4">
-									<div class="input-group">	
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_lamp" data-concat="0" />
-										<span class="input-group-btn">
-											<a class="btn btn-default listCmdActionOther">
-												<i class="fas fa-list-alt"></i>
-											</a>
-										</span>
+							
+							<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">{{Lampe}}</label>
+									<div class="col-xs-11 col-sm-8">
+										<div class="input-group">	
+											<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_lamp" data-concat="0" />
+											<span class="input-group-btn">
+												<a class="btn btn-default listCmdActionOther">
+													<i class="fas fa-list-alt"></i>
+												</a>
+											</span>
+										</div>
 									</div>
+								</div>
 								</div>
 							</div>
 						</div>						

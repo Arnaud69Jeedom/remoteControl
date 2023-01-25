@@ -7,7 +7,8 @@
 
 # 25/01/2023
 
-- Gestion de la température
+- Gestion de la température couleur d'une lampe
+- Gestion d'une valeur optionnelle à surveiller
 - DEBUG : Gestion de la luminosité
 - DEBUG : Utilisation de minValue et maxValue
 
