@@ -1,4 +1,7 @@
 Liste des choses à faire :
+- Double ON/OFF : changement de scène
+- Permettre de choisir un groupe de lumières (sam)
+
 
 -------------------------------------------------------------
 Analyse :

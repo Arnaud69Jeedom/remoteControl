@@ -28,6 +28,10 @@ class remoteControl extends eqLogic {
   const cmd_brightness_up_array = ['up_press', 'brightness_up_click'];
   const cmd_brightness_down_hold_array = ['down_hold', 'brightness_down_hold'];
   const cmd_brightness_up_hold_array = ['up_hold', 'brightness_up_hold'];
+  const cmd_color_up_array = ['arrow_right_click'];
+  const cmd_color_down_array = ['arrow_left_click'];
+  const cmd_color_up_hold_array = ['arrow_right_hold'];
+  const cmd_color_down_hold_array = ['arrow_left_hold'];
 
   /*     * *************************Attributs****************************** */
 
@@ -146,9 +150,6 @@ class remoteControl extends eqLogic {
     //log::add(PLUGIN_NAME, 'debug', ' cmd_lamp='.$cmd_lamp->getHumanName());
     $eqlogic_lamp = $cmd_lamp->getEqLogic();
     
-
-
-
     // toggle
     if (in_array($_option['value'], remoteControl::cmd_toggle_array)) {
       $this->toggle($eqlogic_lamp);
@@ -168,20 +169,36 @@ class remoteControl extends eqLogic {
     if (in_array($_option['value'], remoteControl::cmd_brightness_down_array)) {
       $this->brightness($eqlogic_lamp, -10, 'once');
     }
-
     // brightness_up
     if (in_array($_option['value'], remoteControl::cmd_brightness_up_array)) {
       $this->brightness($eqlogic_lamp, 10, 'once');
     }
 
-    // brightness_down_release
+    // brightness_down_hold
     if (in_array($_option['value'], remoteControl::cmd_brightness_down_hold_array)) {
       $this->brightness($eqlogic_lamp, -1, 'hold');
     }
-
-    // brightness_up_release
+    // brightness_up_hold
     if (in_array($_option['value'], remoteControl::cmd_brightness_up_hold_array)) {
       $this->brightness($eqlogic_lamp, 1, 'hold');
+    }
+
+    // couleur left
+    if (in_array($_option['value'], remoteControl::cmd_color_down_array)) {
+      $this->temperature_color($eqlogic_lamp, -10, 'once');
+    }
+    // couleur right
+    if (in_array($_option['value'], remoteControl::cmd_color_up_array)) {
+      $this->temperature_color($eqlogic_lamp, 10, 'once');
+    }
+
+    // couleur left hold
+    if (in_array($_option['value'], remoteControl::cmd_color_down_hold_array)) {
+      $this->temperature_color($eqlogic_lamp, -1, 'hold');
+    }
+    // couleur right hold
+    if (in_array($_option['value'], remoteControl::cmd_color_up_hold_array)) {
+      $this->temperature_color($eqlogic_lamp, 1, 'hold');
     }
   }
 
@@ -202,16 +219,7 @@ class remoteControl extends eqLogic {
     }
 
     // Recherche LIGHT_STATE
-    $lamp_state = 0;
-    $cmd_state = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_STATE');
-    if ($cmd_state == null) {
-      log::add(PLUGIN_NAME, 'error', ' commande LIGHT_STATE non trouvée');      
-      throw new Exception("commande LIGHT_STATE non trouvée");
-    } else {
-      log::add(PLUGIN_NAME, 'debug', ' cmd_state='.$cmd_state->getHumanName());
-      $lamp_state = $cmd_state->execCmd();
-      log::add(PLUGIN_NAME, 'debug', ' lamp_state='.$lamp_state);
-    }
+    $lamp_state = $this->getStateLamp($eqlogic_lamp);
 
     if ($lamp_state == 0) {
       $this->turnOn($eqlogic_lamp);
@@ -251,14 +259,31 @@ class remoteControl extends eqLogic {
   }
 
   /**
-   * Baisser la luminosité
+   * Obtient l'état de la lampe
+   */
+  private function getStateLamp($eqlogic_lamp) {
+    $lamp_state = 0;
+    $cmd_state = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_STATE');
+    if ($cmd_state == null) {
+      log::add(PLUGIN_NAME, 'error', ' commande LIGHT_STATE non trouvée');      
+      throw new Exception("commande LIGHT_STATE non trouvée");
+    } else {
+      log::add(PLUGIN_NAME, 'debug', ' cmd_state='.$cmd_state->getHumanName());
+      $lamp_state = $cmd_state->execCmd();
+      log::add(PLUGIN_NAME, 'debug', ' lamp_state='.$lamp_state);
+    }
+
+    return $lamp_state;
+  }
+
+  /**
+   * Modifier la luminosité
    */
   private function brightness($eqlogic_lamp, $step, $type) {
     log::add(PLUGIN_NAME, 'debug', ' type:'.$type);
-
-
     $brightessValue = 0;
-    // Recherche LIGHT_BRIGHTNESS
+
+    // Recherche la valeur de LIGHT_BRIGHTNESS
     $cmd_lamp_brightness = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_BRIGHTNESS');
     if ($cmd_lamp_brightness == null) {
       log::add(PLUGIN_NAME, 'error', ' commande LIGHT_BRIGHTNESS non trouvée');
@@ -269,17 +294,16 @@ class remoteControl extends eqLogic {
       log::add(PLUGIN_NAME, 'debug', ' LIGHT_BRIGHTNESS='.$brightessValue);
     }
 
-    // Recherche LIGHT_SLIDER
+    // Recherche la commande LIGHT_SLIDER
     $cmd_lamp_slider = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_SLIDER');
     if ($cmd_lamp_slider == null) {
       log::add(PLUGIN_NAME, 'error', ' commande LIGHT_SLIDER non trouvée');
       throw new Exception("commande LIGHT_SLIDER non trouvée");
     } 
-    // else {
-    //   log::add(PLUGIN_NAME, 'debug', ' LIGHT_SLIDER='.$cmd_lamp_slider->getHumanName());
-    //   $cmd_lamp_slider->execCmd(array('slider' => $brightessValue, 'transition' => 300));
-    //   log::add(PLUGIN_NAME, 'debug', ' brightessValue='.$brightessValue);
-    // }
+
+    // Min et Max
+    $minValue = $cmd_lamp_slider->getConfiguration('minValue');
+    $maxValue = $cmd_lamp_slider->getConfiguration('maxValue');
 
     // Telecommande
     $cmd_remote = $this->getConfiguration('cmd_remote');
@@ -292,17 +316,35 @@ class remoteControl extends eqLogic {
 
     // PRESS
     if ($type == 'once') {
-      $brightessValue += $step;
-      $brightessValue = max($brightessValue, 0);
-      $brightessValue = min($brightessValue, 255);
-      log::add(PLUGIN_NAME, 'debug', ' $brightessValue:'.$brightessValue);
-      $cmd_lamp_slider->execCmd(array('slider' => $brightessValue, 'transition' => 300));
+      // Action
+      $command = $cmd_remote->execCmd();
+      
+      // Etat de la lampe
+      $lamp_state = $this->getStateLamp($eqlogic_lamp);            
+      if ($lamp_state == 0 && in_array($command, remoteControl::cmd_brightness_down_array)) {
+        log::add(PLUGIN_NAME, 'debug', ' state eteinte');
+        return;
+      }
+
+
+      $newBrightessValue = $brightessValue + $step;
+      $newBrightessValue = max($newBrightessValue, $minValue);
+      $newBrightessValue = min($newBrightessValue, $maxValue);
+      log::add(PLUGIN_NAME, 'debug', ' $newBrightessValue:'.$newBrightessValue);
+      
+      // Lampe au maximum sans doute
+      if ($brightessValue == $newBrightessValue) {
+        log::add(PLUGIN_NAME, 'debug', ' commande inutile à envoyer:'.$newBrightessValue);
+        return;
+      }
+      
+      $cmd_lamp_slider->execCmd(array('slider' => $newBrightessValue, 'transition' => 300));
     }
     
     // HOLD
     if ($type == 'hold') {
-      // Nouvelle valeur
-      //$brightessValue += $step;
+      // Luminosité
+      $newBrightessValue = $brightessValue;
 
       // Action
       $command = $cmd_remote->execCmd();
@@ -312,23 +354,151 @@ class remoteControl extends eqLogic {
         in_array($command, remoteControl::cmd_brightness_up_hold_array)
        )
       {
-        $command = $cmd_remote->execCmd();
+        // Etat de la lampe
+        $lamp_state = $this->getStateLamp($eqlogic_lamp);
+        if ($lamp_state == 0 && in_array($command, remoteControl::cmd_brightness_down_hold_array)) {
+          log::add(PLUGIN_NAME, 'debug', ' state eteinte');
+          break;
+        }
 
-        $brightessValue += $step;
-        $brightessValue = max($brightessValue, 0);
-        $brightessValue = min($brightessValue, 255);
-        //log::add(PLUGIN_NAME, 'debug', ' command: '.$command);
-        log::add(PLUGIN_NAME, 'debug', ' brightessValue: '.$brightessValue);
+        // Calcule nouvelle valeur
+        $brightessValue = $newBrightessValue;
+        $newBrightessValue = $newBrightessValue + $step;
+        $newBrightessValue = max($newBrightessValue, $minValue);
+        $newBrightessValue = min($newBrightessValue, $maxValue);
+        log::add(PLUGIN_NAME, 'debug', ' newBrightessValue: '.$newBrightessValue);
         
-        $cmd_lamp_slider->execCmd(array('slider' => $brightessValue, 'transition' => 300));        
+        // Lampe au maximum sans doute
+        if ($brightessValue == $newBrightessValue) {
+          log::add(PLUGIN_NAME, 'debug', ' commande inutile à envoyer:'.$newBrightessValue);
+          break;
+        }
+
+        log::add(PLUGIN_NAME, 'debug', ' commande envoyée:'.$newBrightessValue);
+        $cmd_lamp_slider->execCmd(array('slider' => $newBrightessValue));//, 'transition' => 1000));        
 
         $step *= 2;
-        if (abs($step) >= 20) {
-          $step = $sign * 20;
+        if (abs($step) >= 3) {
+          $step = $sign * 3;
         }
         log::add(PLUGIN_NAME, 'debug', ' step: '.$step);
 
-        sleep(1);
+        usleep(0.1 * 1000*1000);
+
+        // Bouton appuyé
+        $command = $cmd_remote->execCmd();
+      }
+    }
+  }
+
+
+    /**
+   * Modifier la couleur
+   */
+  private function temperature_color($eqlogic_lamp, $step, $type) {
+    log::add(PLUGIN_NAME, 'debug', ' type:'.$type);
+    $temperatureValue = 0;
+
+    // Recherche la valeur de LIGHT_COLOR_TEMP
+    $cmd_lamp_temp_color = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_COLOR_TEMP');
+    if ($cmd_lamp_temp_color == null) {
+      log::add(PLUGIN_NAME, 'error', ' commande LIGHT_COLOR_TEMP non trouvée');
+      throw new Exception("commande LIGHT_COLOR_TEMP non trouvée");
+    } else {
+      log::add(PLUGIN_NAME, 'debug', ' cmd_lamp_temp_color='.$cmd_lamp_temp_color->getHumanName());
+      $temperatureValue = $cmd_lamp_temp_color->execCmd();
+      log::add(PLUGIN_NAME, 'debug', ' LIGHT_COLOR_TEMP='.$temperatureValue);
+    }
+
+    // Min et Max
+    $minValue = $cmd_lamp_temp_color->getConfiguration('minValue');
+    $maxValue = $cmd_lamp_temp_color->getConfiguration('maxValue');
+
+    // Recherche la commande LIGHT_SLIDER
+    $cmd_lamp_slider = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_SET_COLOR_TEMP');
+    if ($cmd_lamp_slider == null) {
+      log::add(PLUGIN_NAME, 'error', ' commande LIGHT_SET_COLOR_TEMP non trouvée');
+      throw new Exception("commande LIGHT_SET_COLOR_TEMP non trouvée");
+    } 
+
+    // Telecommande
+    $cmd_remote = $this->getConfiguration('cmd_remote');
+    $cmd_remote = str_replace('#', '', $cmd_remote);
+    $cmd_remote = cmd::byId($cmd_remote);
+    if (!is_object($cmd_remote)) {
+      log::add(PLUGIN_NAME, 'error', ' commande cmd_remote non trouvé');
+      throw new Exception("cmd_remote non renseigné");
+    }
+
+    // PRESS
+    if ($type == 'once') {
+      // Etat de la lampe
+      $lamp_state = $this->getStateLamp($eqlogic_lamp);            
+      if ($lamp_state == 0) {
+        log::add(PLUGIN_NAME, 'debug', ' state eteinte');
+        return;
+      }
+
+      $newTemperatureValue = $temperatureValue + $step;
+      $newTemperatureValue = max($newTemperatureValue, $minValue);
+      $newTemperatureValue = min($newTemperatureValue, $maxValue);
+      log::add(PLUGIN_NAME, 'debug', ' $newTemperatureValue:'.$newTemperatureValue);
+
+      // Lampe au maximum sans doute
+      if ($temperatureValue == $newTemperatureValue) {
+        log::add(PLUGIN_NAME, 'debug', ' commande inutile à envoyer:'.$newTemperatureValue);
+        return;
+      }
+
+      $cmd_lamp_slider->execCmd(array('slider' => $newTemperatureValue, 'transition' => 300));
+    }
+    
+    // HOLD
+    if ($type == 'hold') {
+      // Température
+      $newTemperatureValue = $temperatureValue;
+
+      // Action
+      $command = $cmd_remote->execCmd();
+      $sign = $step <=> 0;
+      while (
+        in_array($command, remoteControl::cmd_color_down_hold_array) || 
+        in_array($command, remoteControl::cmd_color_up_hold_array)
+       )
+      {
+        // Etat de la lampe
+        $lamp_state = $this->getStateLamp($eqlogic_lamp);
+        if ($lamp_state == 0) {
+          log::add(PLUGIN_NAME, 'debug', ' state eteinte');
+          break;
+        }
+
+        // Calcule nouvelle valeur
+        $temperatureValue = $newTemperatureValue;
+        $newTemperatureValue = $newTemperatureValue + $step;
+        $newTemperatureValue = max($newTemperatureValue, $minValue);
+        $newTemperatureValue = min($newTemperatureValue, $maxValue);
+        log::add(PLUGIN_NAME, 'debug', ' newTemperatureValue: '.$newTemperatureValue);
+        
+        // Lampe au maximum sans doute
+        if ($temperatureValue == $newTemperatureValue) {
+          log::add(PLUGIN_NAME, 'debug', ' commande inutile à envoyer:'.$newTemperatureValue);
+          break;
+        }
+
+        log::add(PLUGIN_NAME, 'debug', ' commande envoyée:'.$newTemperatureValue);
+        $cmd_lamp_slider->execCmd(array('slider' => $newTemperatureValue));//, 'transition' => 1000));        
+
+        $step *= 2;
+        if (abs($step) >= 3) {
+          $step = $sign * 3;
+        }
+        log::add(PLUGIN_NAME, 'debug', ' step: '.$step);
+
+        usleep(0.1 * 1000*1000);
+
+        // Bouton appuyé
+        $command = $cmd_remote->execCmd();
       }
     }
   }

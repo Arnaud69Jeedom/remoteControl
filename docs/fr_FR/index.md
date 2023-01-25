@@ -1,18 +1,44 @@
-# Plugin remoteControl
+# Plugin Remote Control
 
-Ce plugin permet de gérer la notion de remoteControl pour **Jeedom**.
+Plugin permettant de gérer les télécommandes pour **Jeedom**.
 
-La documentation générale relative à la conception de plugin est consultable [ici](https://doc.jeedom.com/fr_FR/dev/).
+# Introduction 
 
-Dans le détail :   
-* [Utilisation du template de plugin](https://doc.jeedom.com/fr_FR/dev/plugin_template) : Le template de plugin est une base de plugin pour Jeedom qui doit être adaptée avec l'id de votre plugin et à laquelle il suffit d'ajouter vos propres fonctions.
+La gestion des télécommandes se gèrent normalement via des scénarios plus ou moins coomplexe
+Ce plugin permet de gérer le ON/OFF, la luminosité et la température couleur d'une lampe.
 
-* [Fichier info.json](https://doc.jeedom.com/fr_FR/dev/structure_info_json) : Intégré depuis la version 3.0 de Jeedom, le fichier **info.json** est obligatoire pour le bon fonctionnement des plugins et leur bon déploiement sur le Market Jeedom.
+# Remarque
 
-* [Icône du plugin](https://doc.jeedom.com/fr_FR/dev/Icone_de_plugin) : Afin de pouvoir être publié sur le Market Jeedom, tout plugin doit disposer d’une icône. Attention à ne pas utiliser le même code couleur que les icônes des plugins Jeedom officiels.
+Les télécommandes envoient des commandes toutes différentes.
+Ce plugin gère les télécommandes sous zigbeeLinker (et peut-être jMqtt) via la commande 'action', qui semble simplifier les commandes selon les marques de télécommandes.
 
-* [Widget du plugin](https://doc.jeedom.com/fr_FR/dev/widget_plugin) : Présentation des différentes manières d'inclure des widgets personnalisés au plugin.
+Les tests ont été effectués sous ZigbeeLinker, et avec des télécommandes suivantes :
+- Hue Dimmer (version 1, sans le bouton Hue)
+- Ikea remote control (5 boutons)
 
-* [Documentation du plugin](https://doc.jeedom.com/fr_FR/dev/documentation_plugin) : Présentation de la mise en place d'une documentation car un bon plugin n'est rien sans documentation adéquate.
+La lampe testée est une Ikea.
 
-* [Publication du plugin](https://doc.jeedom.com/fr_FR/dev/publication_plugin) : Description des pré-requis indispensables à la publication du plugin.
+
+# Configuration du plugin
+
+La configuration est simple.
+
+## Emplacement
+
+Le plugin s'adapte à l'emplacement de Jeedom.
+Il faut donc vérifier que cela est correctement renseigné
+Dans le menu Réglages/Système/Configuration, puis dans l'onglet Général, voir la section Coordonnées
+
+![Configuration Plugin](../images/Param_Coordonnées.png)
+
+## Onglet Lumières
+
+Cet onglet permet de sélectionner la télécommande et la lampe qu'on souhaite gérer.
+Il faut alors renseigner 2 informations :
+- Remote : la commande 'action' de la télécommande,
+- Lampe : la commandede la lampe pour le toogle.
+
+NOTE : 
+- Les types génériques de la lampes doivent être renseignés (LIGHT_TOGGLE, LIGHT_ON, LIGHT_OFF, LIGHT_STATE, LIGHT_BRIGHTNESS, LIGHT_SLIDER, LIGHT_COLOR_TEMP, LIGHT_SET_COLOR_TEMP)
+
+![Configuration Plugin](../images/Equipement_Lumieres.png)
