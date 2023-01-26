@@ -35,10 +35,10 @@ Dans le menu Réglages/Système/Configuration, puis dans l'onglet Général, voi
 
 Cet onglet permet de sélectionner la télécommande et la lampe qu'on souhaite gérer.
 Il faut alors renseigner 2 informations :
-- Remote : la commande 'action' de la télécommande,
+- Remote (1 à 4) : la commande 'action' de la télécommande,
 - Lampe : la commandede la lampe pour le toogle.
 
-Il existe une valeur optionnelle à renseigner :
+Il existe une valeur optionnelle à renseigner par remote :
 - Valeur : Indiquer la valeur à prendre en compte.
    Exemple : le Hue Switch sur un interrupteur 2 boutons va envoyer l'action left_press et right_press.
    Il peut être souhaité de n'agir uniquement lorsque le bouton gauche est pressé concernant cette lampe.

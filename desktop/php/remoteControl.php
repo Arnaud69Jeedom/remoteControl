@@ -150,6 +150,26 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						<div class="col-lg-11">
 							<legend><i class="icon jeedom2-lightbulb25"></i> {{Remote control}}</legend>
 							
+							<!-- Lampe -->
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">{{Lampe}}</label>
+										<div class="col-xs-11 col-sm-8">
+											<div class="input-group">	
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_lamp" data-concat="0" />
+												<span class="input-group-btn">
+													<a class="btn btn-default listCmdActionOther">
+														<i class="fas fa-list-alt"></i>
+													</a>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Remote 1 -->
 							<div class="row">
 								<div class="col-sm-6">
 									<div class="form-group">
@@ -166,8 +186,6 @@ $eqLogics = eqLogic::byType($plugin->getId());
 										</div>
 									</div>
 								</div>
-							
-							
 								<div class="col-sm-6">
 									<div class="form-group">
 										<label class="col-sm-3 control-label">{{Valeur (optionnel)}}</label>
@@ -181,23 +199,95 @@ $eqLogics = eqLogic::byType($plugin->getId());
 								</div>
 							</div>
 							
+							<!-- Remote 2 -->
 							<div class="row">
-							<div class="col-sm-6">
-								<div class="form-group">
-									<label class="col-sm-3 control-label">{{Lampe}}</label>
-									<div class="col-xs-11 col-sm-8">
-										<div class="input-group">	
-											<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_lamp" data-concat="0" />
-											<span class="input-group-btn">
-												<a class="btn btn-default listCmdActionOther">
-													<i class="fas fa-list-alt"></i>
-												</a>
-											</span>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Remote 2</label>
+										<div class="col-xs-11 col-sm-8">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_remote2" data-concat="0">
+												<span class="input-group-btn">
+													<a class="btn btn-default listCmdInfo">
+														<i class="fas fa-list-alt"></i>
+													</a>
+												</span>
+											</div>
 										</div>
 									</div>
 								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">{{Valeur (optionnel)}}</label>
+										<div class="col-xs-11 col-sm-4">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_value2" data-concat="0" />
+											</div>
+										</div>
+										Valeur à surveiller
+									</div>																
 								</div>
 							</div>
+
+							<!-- Remote 3 -->
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Remote 3</label>
+										<div class="col-xs-11 col-sm-8">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_remote3" data-concat="0">
+												<span class="input-group-btn">
+													<a class="btn btn-default listCmdInfo">
+														<i class="fas fa-list-alt"></i>
+													</a>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">{{Valeur (optionnel)}}</label>
+										<div class="col-xs-11 col-sm-4">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_value3" data-concat="0" />
+											</div>
+										</div>
+										Valeur à surveiller
+									</div>																
+								</div>
+							</div>
+
+							<!-- Remote 4 -->
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Remote 4</label>
+										<div class="col-xs-11 col-sm-8">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_remote4" data-concat="0">
+												<span class="input-group-btn">
+													<a class="btn btn-default listCmdInfo">
+														<i class="fas fa-list-alt"></i>
+													</a>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">{{Valeur (optionnel)}}</label>
+										<div class="col-xs-11 col-sm-4">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_value4" data-concat="0" />
+											</div>
+										</div>
+										Valeur à surveiller
+									</div>																
+								</div>
+							</div>							
 						</div>						
 				     </fieldset>
 				</form>
