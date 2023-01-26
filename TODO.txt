@@ -22,7 +22,7 @@ Analyse :
     appui long : brightness_move_up/brightnes_stop
 
 - Mqtt Hue Tap Dial Switch :
-    action : button_1_press/
+    action : button_1_press/button_1_hold/button_1_hold_release
     rotate: dial_rotate_right_slow/dial_rotate_right_step/dial_rotate_left_fast
 
 - Théo Hue :
