@@ -42,7 +42,12 @@ class remoteControl extends eqLogic {
    */
   public static function pullRefresh($_option) {
     $eqLogic = self::byId($_option['id']);
-    log::add(PLUGIN_NAME, 'info', 'pullRefresh. Remote:'.$eqLogic->getHumanName().', value: '. $_option['value']);
+    $cmdTrigger = cmd::byId($_option['event_id']);
+
+    log::add(PLUGIN_NAME, 'info', 'pullRefresh. '.
+          'Remote:'.$eqLogic->getHumanName().
+          ', Trigger:'.$cmdTrigger->getHumanName().
+          ', value: '. $_option['value']);
 
     if (is_object($eqLogic) && $eqLogic->getIsEnable() == 1) {
       $eqLogic->computeLamp($_option);
@@ -336,13 +341,15 @@ class remoteControl extends eqLogic {
    * Toggle une lampe
    */
   private function toggle($eqlogic_lamp) {
+    log::add(PLUGIN_NAME, 'info', '  action Toogle');
+
     // Recherche LIGHT_TOGGLE
     $cmd_toggle = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_TOGGLE');
     if ($cmd_toggle == null) {
       log::add(PLUGIN_NAME, 'error', 'commande LIGHT_TOGGLE non trouvée');
       throw new Exception("commande LIGHT_TOGGLE non trouvée");
     } else {
-      log::add(PLUGIN_NAME, 'debug', '  cmd_toggle='.$cmd_toggle->getHumanName());
+      log::add(PLUGIN_NAME, 'debug', '   cmd_toggle='.$cmd_toggle->getHumanName());
       
       $cmd_toggle->execCmd();
       return;
@@ -362,6 +369,8 @@ class remoteControl extends eqLogic {
    * Allumer une lampe
    */
   private function turnOn($eqlogic_lamp) {
+    log::add(PLUGIN_NAME, 'info', '  action On');
+
     // Recherche LIGHT_ON
     $cmd_lamp_on = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_ON');
     if ($cmd_lamp_on == null) {
@@ -377,6 +386,8 @@ class remoteControl extends eqLogic {
    * Eteindre une lampe
    */
   private function turnOff($eqlogic_lamp) {
+    log::add(PLUGIN_NAME, 'info', '  action Off');
+
     // Recherche LIGHT_OFF
     $cmd_lamp_off = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_OFF');
     if ($cmd_lamp_off == null) {
@@ -410,7 +421,8 @@ class remoteControl extends eqLogic {
    * Modifier la luminosité
    */
   private function brightness($eqlogic_lamp, $step, $type) {
-    log::add(PLUGIN_NAME, 'debug', '   type:'.$type);
+    log::add(PLUGIN_NAME, 'info', '  action brightness, type:'.$type);
+
     $brightessValue = 0;
 
     // Recherche la valeur de LIGHT_BRIGHTNESS
@@ -526,7 +538,7 @@ class remoteControl extends eqLogic {
    * Modifier la couleur
    */
   private function temperature_color($eqlogic_lamp, $step, $type) {
-    log::add(PLUGIN_NAME, 'debug', '   type:'.$type);
+    log::add(PLUGIN_NAME, 'info', '  action temperature_color, type:'.$type);
     $temperatureValue = 0;
 
     // Recherche la valeur de LIGHT_COLOR_TEMP
