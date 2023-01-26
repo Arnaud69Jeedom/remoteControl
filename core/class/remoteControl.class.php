@@ -343,17 +343,17 @@ class remoteControl extends eqLogic {
   private function toggle($eqlogic_lamp) {
     log::add(PLUGIN_NAME, 'info', '  action Toogle');
 
-    // Recherche LIGHT_TOGGLE
-    $cmd_toggle = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_TOGGLE');
-    if ($cmd_toggle == null) {
-      log::add(PLUGIN_NAME, 'error', 'commande LIGHT_TOGGLE non trouvée');
-      throw new Exception("commande LIGHT_TOGGLE non trouvée");
-    } else {
-      log::add(PLUGIN_NAME, 'debug', '   cmd_toggle='.$cmd_toggle->getHumanName());
+    // // Recherche LIGHT_TOGGLE
+    // $cmd_toggle = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_TOGGLE');
+    // if ($cmd_toggle == null) {
+    //   log::add(PLUGIN_NAME, 'error', 'commande LIGHT_TOGGLE non trouvée');
+    //   throw new Exception("commande LIGHT_TOGGLE non trouvée");
+    // } else {
+    //   log::add(PLUGIN_NAME, 'debug', '   cmd_toggle='.$cmd_toggle->getHumanName());
       
-      $cmd_toggle->execCmd();
-      return;
-    }
+    //   $cmd_toggle->execCmd();
+    //   return;
+    // }
 
     // Recherche LIGHT_STATE
     $lamp_state = $this->getStateLamp($eqlogic_lamp);
