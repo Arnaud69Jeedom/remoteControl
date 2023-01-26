@@ -1,6 +1,6 @@
 {
 	"id" : "remoteControl",
-	"name" : "remote Control",
+	"name" : "Remote Control",
 	"description" : {
 		"fr_FR": "plugins remoteControl pour Jeedom"
 	},

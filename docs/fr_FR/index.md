@@ -7,18 +7,6 @@ Plugin permettant de gérer les télécommandes pour **Jeedom**.
 La gestion des télécommandes se gèrent normalement via des scénarios plus ou moins coomplexe
 Ce plugin permet de gérer le ON/OFF, la luminosité et la température couleur d'une lampe.
 
-# Remarque
-
-Les télécommandes envoient des commandes toutes différentes.
-Ce plugin gère les télécommandes sous zigbeeLinker (et peut-être jMqtt) via la commande 'action', qui semble simplifier les commandes selon les marques de télécommandes.
-
-Les tests ont été effectués sous ZigbeeLinker, et avec des télécommandes suivantes :
-- Hue Dimmer (version 1, sans le bouton Hue)
-- Ikea remote control (5 boutons)
-
-La lampe testée est une Ikea.
-
-
 # Configuration du plugin
 
 La configuration est simple.
@@ -49,3 +37,19 @@ NOTE :
 Ceci est fait automatiquement sur les équipements ZigbeeLinker.
 
 ![Configuration Plugin](../images/Equipement_Lumieres.png)
+
+
+# Compatibilité et Incompatibilité
+
+En résumé :
+Les télécommandes envoient des commandes toutes différentes.
+Ce plugin gère les télécommandes sous zigbeeLinker (et peut-être jMqtt) via la commande 'action', qui semble simplifier les commandes selon les marques de télécommandes.
+
+Il gère aussi mes télécommandes sous Enocean qui donne la valeur 0 ou 1.
+
+Les tests ont été effectués sous ZigbeeLinker, et avec des télécommandes suivantes :
+- Hue Dimmer (version 1, sans le bouton Hue)
+- Ikea remote control (5 boutons)
+- Hue Switch
+
+La lampe testée est une Ikea (zigbeeLinker) et Hue (avec le pont Hue).

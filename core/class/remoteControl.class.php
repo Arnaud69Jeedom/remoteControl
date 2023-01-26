@@ -24,10 +24,12 @@ class remoteControl extends eqLogic {
   const cmd_toggle_array = ['toggle', '0', '1'];  // 0 et 1 pour Enocean
   const cmd_on_array = ['on_press'];
   const cmd_off_array = ['off_press'];
-  const cmd_brightness_down_array = ['down_press', 'brightness_down_click'];
-  const cmd_brightness_up_array = ['up_press', 'brightness_up_click'];
+  const cmd_brightness_down_array = ['down_press', 'brightness_down_click', 
+      'dial_rotate_left_step', 'dial_rotate_left_slow', 'dial_rotate_left_fast'];
+  const cmd_brightness_up_array = ['up_press', 'brightness_up_click', 
+      'dial_rotate_right_step', 'dial_rotate_right_slow', 'dial_rotate_right_fast'];
   const cmd_brightness_down_hold_array = ['down_hold', 'brightness_down_hold'];
-  const cmd_brightness_up_hold_array = ['up_hold', 'brightness_up_hold'];
+  const cmd_brightness_up_hold_array = ['up_hold', 'brightness_up_hold', 'dial_rotate_right_fast'];
   const cmd_color_up_array = ['arrow_right_click'];
   const cmd_color_down_array = ['arrow_left_click'];
   const cmd_color_up_hold_array = ['arrow_right_hold'];
@@ -216,7 +218,7 @@ class remoteControl extends eqLogic {
   public function postRemove() {
   }
 
-  private function computeLamp($_option) {
+  public function computeLamp($_option) {
     log::add(PLUGIN_NAME, 'debug', '  computeLamp : '.$this->getHumanName().', commande: '. $_option['value']);
 
     $cmd_lamp = $this->getConfiguration('cmd_lamp');
