@@ -55,7 +55,7 @@ class remoteControl extends eqLogic {
    * @return listener
    */
   private function getListener() {
-    log::add(PLUGIN_NAME, 'debug', 'getListener');
+    //log::add(PLUGIN_NAME, 'debug', 'getListener');
 
     return listener::byClassAndFunction(__CLASS__, 'pullRefresh', array('id' => $this->getId()));
   }
@@ -75,13 +75,42 @@ class remoteControl extends eqLogic {
         return;
     }
 
+    $remote_array = [];
+
+    // Remote 1
     $cmd_toggle = $this->getConfiguration('cmd_remote');
     $cmd_toggle = str_replace('#', '', $cmd_toggle);
     $cmd_toggle = cmd::byId($cmd_toggle);
-    if (!is_object($cmd_toggle)) {
-      // Pas encore paramétré
+    if (is_object($cmd_toggle)) {
+      array_push($remote_array, $cmd_toggle);
+    }
+
+    // Remote 2
+    $cmd_toggle = $this->getConfiguration('cmd_remote2');
+    $cmd_toggle = str_replace('#', '', $cmd_toggle);
+    $cmd_toggle = cmd::byId($cmd_toggle);
+    if (is_object($cmd_toggle)) {
+      array_push($remote_array, $cmd_toggle);
+    }
+
+    // Remote 3
+    $cmd_toggle = $this->getConfiguration('cmd_remote3');
+    $cmd_toggle = str_replace('#', '', $cmd_toggle);
+    $cmd_toggle = cmd::byId($cmd_toggle);
+    if (is_object($cmd_toggle)) {
+      array_push($remote_array, $cmd_toggle);
+    }
+
+    // Remote 4
+    $cmd_toggle = $this->getConfiguration('cmd_remote4');
+    $cmd_toggle = str_replace('#', '', $cmd_toggle);
+    $cmd_toggle = cmd::byId($cmd_toggle);
+    if (is_object($cmd_toggle)) {
+      array_push($remote_array, $cmd_toggle);
+    }
+
+    if (empty($remote_array)) {
       return;
-      //throw new Exception("cmd_remote non renseigné");
     }
 
     $listener = $this->getListener();
@@ -92,8 +121,12 @@ class remoteControl extends eqLogic {
       $listener->setOption(array('id' => $this->getId()));
     }
     $listener->emptyEvent();
-    $listener->addEvent($cmd_toggle->getId());
-    
+
+    foreach($remote_array as $remote ) {
+      //log::add(PLUGIN_NAME, 'debug', 'addEvent:'.$remote->getHumanName());
+      $listener->addEvent($remote->getId());
+    }
+  
     $listener->save();
   }
 
