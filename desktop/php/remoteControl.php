@@ -3,7 +3,7 @@ if (!isConnect('admin')) {
 	throw new Exception('{{401 - Accès non autorisé}}');
 }
 // Déclaration des variables obligatoires
-$plugin = plugin::byId('naturalLight');
+$plugin = plugin::byId('remoteControl');
 sendVarToJS('eqType', $plugin->getId());
 $eqLogics = eqLogic::byType($plugin->getId());
 ?>
@@ -28,7 +28,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 		<legend><i class="fas fa-table"></i> {{Mes lumières}}</legend>
 		<?php
 		if (count($eqLogics) == 0) {
-			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun équipement Natural Light trouvé, cliquer sur "Ajouter" pour commencer}}</div>';
+			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun équipement Remote Control trouvé, cliquer sur "Ajouter" pour commencer}}</div>';
 		} else {
 			// Champ de recherche
 			echo '<div class="input-group" style="margin:5px;">';
@@ -74,7 +74,6 @@ $eqLogics = eqLogic::byType($plugin->getId());
 			<li role="presentation"><a href="#" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fas fa-arrow-circle-left"></i></a></li>
 			<li role="presentation" class="active"><a href="#eqlogictab" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-tachometer-alt"></i> {{Equipement}}</a></li>
 			<li role="presentation"><a href="#lighttab" aria-controls="home" role="tab" data-toggle="tab"><i class="icon jeedom2-lightbulb25"></i> {{Lumières}}</a></li>
-			<li role="presentation"><a href="#commandtab" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-list"></i> {{Commandes}}</a></li>
 		</ul>
 		<div class="tab-content">
 			<!-- Onglet de configuration de l'équipement -->
@@ -145,70 +144,160 @@ $eqLogics = eqLogic::byType($plugin->getId());
 
 			<!-- Onglet de configuration de l'équipement -->
 			<div role="tabpanel" class="tab-pane" id="lighttab">
-				<!-- Commande de la lumières -->
+				<!-- Commande de la remote -->
 				<form class="form-horizontal">
 					<fieldset>
-						<div class="col-lg-6">
-							<legend><i class="icon jeedom2-lightbulb25"></i> {{Lampes}}</legend>
-							<div class="form-group">
-								<label class="col-sm-4 control-label">{{Température couleur}}</label>
-								<div class="col-xs-11 col-sm-6">
-									<div class="input-group">
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="temperature_color" data-concat="0" />
-										<span class="input-group-btn">
-											<a class="btn btn-default listCmdAction">
-												<i class="fas fa-list-alt"></i>
-											</a>
-										</span>
+						<div class="col-lg-11">
+							<legend><i class="icon jeedom2-lightbulb25"></i> {{Remote control}}</legend>
+							
+							<!-- Lampe -->
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">{{Lampe}}</label>
+										<div class="col-xs-11 col-sm-8">
+											<div class="input-group">	
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_lamp" data-concat="0" />
+												<span class="input-group-btn">
+													<a class="btn btn-default listCmdActionOther">
+														<i class="fas fa-list-alt"></i>
+													</a>
+												</span>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
 
-							<div class="form-group">
-								<label class="col-sm-4 control-label">{{Lampe état}}</label>
-								<div class="col-xs-11 col-sm-6">
-									<div class="input-group">
-										<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="lamp_state" data-concat="0" />
-										<span class="input-group-btn">
-											<a class="btn btn-default listCmdInfo">
-												<i class="fas fa-list-alt"></i>
-											</a>
-										</span>
+							<!-- Remote 1 -->
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Remote</label>
+										<div class="col-xs-11 col-sm-8">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_remote" data-concat="0">
+												<span class="input-group-btn">
+													<a class="btn btn-default listCmdInfo">
+														<i class="fas fa-list-alt"></i>
+													</a>
+												</span>
+											</div>
+										</div>
 									</div>
 								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">{{Valeur (optionnel)}}</label>
+										<div class="col-xs-11 col-sm-4">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_value" data-concat="0" />										
+											</div>
+										</div>
+										Valeur à surveiller
+									</div>																
+								</div>
 							</div>
-						</div>
+							
+							<!-- Remote 2 -->
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Remote 2</label>
+										<div class="col-xs-11 col-sm-8">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_remote2" data-concat="0">
+												<span class="input-group-btn">
+													<a class="btn btn-default listCmdInfo">
+														<i class="fas fa-list-alt"></i>
+													</a>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">{{Valeur (optionnel)}}</label>
+										<div class="col-xs-11 col-sm-4">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_value2" data-concat="0" />
+											</div>
+										</div>
+										Valeur à surveiller
+									</div>																
+								</div>
+							</div>
+
+							<!-- Remote 3 -->
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Remote 3</label>
+										<div class="col-xs-11 col-sm-8">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_remote3" data-concat="0">
+												<span class="input-group-btn">
+													<a class="btn btn-default listCmdInfo">
+														<i class="fas fa-list-alt"></i>
+													</a>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">{{Valeur (optionnel)}}</label>
+										<div class="col-xs-11 col-sm-4">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_value3" data-concat="0" />
+											</div>
+										</div>
+										Valeur à surveiller
+									</div>																
+								</div>
+							</div>
+
+							<!-- Remote 4 -->
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">Remote 4</label>
+										<div class="col-xs-11 col-sm-8">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_remote4" data-concat="0">
+												<span class="input-group-btn">
+													<a class="btn btn-default listCmdInfo">
+														<i class="fas fa-list-alt"></i>
+													</a>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label">{{Valeur (optionnel)}}</label>
+										<div class="col-xs-11 col-sm-4">
+											<div class="input-group">
+												<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="cmd_value4" data-concat="0" />
+											</div>
+										</div>
+										Valeur à surveiller
+									</div>																
+								</div>
+							</div>							
+						</div>						
 				     </fieldset>
 				</form>
 			</div><!-- /.tabpanel #lighttab-->
-
-			<!-- Onglet des commandes de l'équipement -->
-			<div role="tabpanel" class="tab-pane" id="commandtab">
-				<!-- <a class="btn btn-default btn-sm pull-right cmdAction" data-action="add" style="margin-top:5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une commande}}</a> -->
-				<br><br>
-				<div class="table-responsive">
-					<table id="table_cmd" class="table table-bordered table-condensed">
-						<thead>
-							<tr>
-								<th class="hidden-xs" style="min-width:50px;width:70px;">ID</th>
-								<th style="min-width:200px;width:350px;">{{Nom}}</th>
-								<th>{{Type}}</th>
-								<th style="min-width:260px;">{{Options}}</th>
-								<th>{{Etat}}</th>
-								<th style="min-width:80px;width:200px;">{{Actions}}</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
-				</div>
-			</div><!-- /.tabpanel #commandtab-->
-
+			
 		</div><!-- /.tab-content -->
 	</div><!-- /.eqLogic -->
 </div><!-- /.row row-overflow -->
 
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
-<?php include_file('desktop', 'naturalLight', 'js', 'naturalLight');?>
+<?php include_file('desktop', 'remoteControl', 'js', 'remoteControl');?>
 <!-- Inclusion du fichier javascript du core - NE PAS MODIFIER NI SUPPRIMER -->
 <?php include_file('core', 'plugin.template', 'js');?>

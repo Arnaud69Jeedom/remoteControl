@@ -1,6 +1,6 @@
 {
 	"id" : "remoteControl",
-	"name" : "remote Control",
+	"name" : "Remote Control",
 	"description" : {
 		"fr_FR": "plugins remoteControl pour Jeedom"
 	},
@@ -11,10 +11,12 @@
 	"hasDependency" : false,
 	"hasOwnDeamon" : false,
 	"maxDependancyInstallTime" : 0,
-	"changelog" : "https://jeedom.github.io/remoteControl/#language#/changelog",
-	"documentation" : "https://jeedom.github.io/remoteControl/#language#/",
-	"changelog_beta" : "https://jeedom.github.io/remoteControl/#language#/beta/changelog",
-	"documentation_beta" : "https://jeedom.github.io/remoteControl/#language#/beta/",
+	"changelog": "https://github.com/Arnaud69Jeedom/remoteControl/blob/master/docs/#language#/changelog.md",
+	"documentation": "https://github.com/Arnaud69Jeedom/remoteControl/blob/master/docs/#language#/index.md",
+	
+	"changelog_beta": "https://github.com/Arnaud69Jeedom/remoteControl/blob/beta/docs/#language#/changelog.md",
+	"documentation_beta": "https://github.com/Arnaud69Jeedom/remoteControl/blob/beta/docs/#language#/index.md",
+
 	"language": [
 		"fr_FR"
 	],
