@@ -2,7 +2,7 @@
 	"id" : "remoteControl",
 	"name" : "Remote Control",
 	"description" : {
-		"fr_FR": "plugins remoteControl pour Jeedom"
+		"fr_FR": "Permet d'associer une télécommande à Jeedom sans faire du binding (en cours de développement). Exemple : Remote Enocean pour allumer une lampe Zigbee"
 	},
 	"licence" : "AGPL",
 	"author" : "Arnaud_69",
