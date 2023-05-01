@@ -58,26 +58,23 @@ class remoteControl extends eqLogic {
 
     if (is_object($eqLogic) && $eqLogic->getIsEnable() == 1) {
       // HERE
-      $eqLogic->computeLamp($_option);
+      //$eqLogic->computeLamp($_option);
       //return;
       
       $eqlogic_lamp = $eqLogic->getEqLogicFromCmd();
 
-      log::add(__CLASS__, 'info', 'pullRefresh test lamp state');
       $cmd_light_state = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_STATE');
-      log::add(__CLASS__, 'info', 'pullRefresh cmd_light_state:'.$cmd_light_state);
-
-      log::add(__CLASS__, 'info', 'pullRefresh test outlet state');      
       $cmd_energy_state = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'ENERGY_STATE');
-      log::add(__CLASS__, 'info', 'pullRefresh cmd_energy_state:'.$cmd_energy_state);
 
       if ($cmd_light_state) {
-        $eqlogic_lamp->computeLamp($_option);
+        log::add(__CLASS__, 'info', 'pullRefresh lampe');
+        $eqLogic->computeLamp($_option);
         return;
       }
 
       if ($cmd_energy_state) {
-        $eqlogic_lamp->computeOutlet($_option);
+        log::add(__CLASS__, 'info', 'pullRefresh prise');
+        $eqLogic->computeOutlet($_option);
         return;
       }
       
@@ -97,7 +94,8 @@ class remoteControl extends eqLogic {
     }
     //log::add(__CLASS__, 'debug', ' cmd_lamp='.$cmd_lamp->getHumanName());
     $eqlogic_lamp = $cmd_lamp->getEqLogic();
-    
+    log::add(__CLASS__, 'debug', ' eqlogic_lamp='.$eqlogic_lamp->getHumanName());
+
     return $eqlogic_lamp;
   }
 
