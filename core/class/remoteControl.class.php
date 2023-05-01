@@ -44,7 +44,8 @@ class remoteControl extends eqLogic {
   /*     * ***********************Methode static*************************** */
 
  
-  /* Fonction appelé par Listener
+  /**
+   * Fonction appelée par Listener
    */
   public static function pullRefresh($_option) {
     $eqLogic = self::byId($_option['id']);
@@ -56,8 +57,37 @@ class remoteControl extends eqLogic {
           ', value: '. $_option['value']);
 
     if (is_object($eqLogic) && $eqLogic->getIsEnable() == 1) {
-      $eqLogic->computeLamp($_option);
+      $eqlogic_lamp = $eqLogic->getEqLogicFromCmd();
+      $cmd_light_state = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_STATE');
+      $cmd_energy_state = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'ENERGY_STATE');
+      log::add(__CLASS__, 'info', 'pullRefresh cmd_light_state:'.$cmd_light_state);
+      log::add(__CLASS__, 'info', 'pullRefresh cmd_energy_state:'.$cmd_energy_state);
+
+      if ($cmd_light_state) {
+        $eqLogic->computeLamp($_option);
+      }
+
+      if ($cmd_energy_state) {
+        $eqLogic->computeOutlet($_option);
+      }
+
     }
+  }
+
+  public function getEqLogicFromCmd() {
+    log::add(__CLASS__, 'debug', '  '.__FUNCTION__.' : '.$this->getHumanName());
+
+    $cmd_lamp = $this->getConfiguration('cmd_lamp');
+    $cmd_lamp = str_replace('#', '', $cmd_lamp);
+    $cmd_lamp = cmd::byId($cmd_lamp);
+    if (!is_object($cmd_lamp)) {
+      log::add(__CLASS__, 'error', ' commande cmd_lamp non trouvé');
+      throw new Exception("cmd_lamp non renseigné");
+    }
+    //log::add(__CLASS__, 'debug', ' cmd_lamp='.$cmd_lamp->getHumanName());
+    $eqlogic_lamp = $cmd_lamp->getEqLogic();
+
+    return $eqlogic_lamp;
   }
 
   /*     * *********************Méthodes d'instance************************* */
@@ -71,6 +101,9 @@ class remoteControl extends eqLogic {
     return listener::byClassAndFunction(__CLASS__, 'pullRefresh', array('id' => $this->getId()));
   }
 
+  /**
+   * Suppression d'un Listener
+   */
   private function removeListener() {
     // log::add(__CLASS__, 'debug', 'remove Listener');
 
@@ -80,6 +113,9 @@ class remoteControl extends eqLogic {
     }
   }
 
+  /**
+   * Enregistrement d'un Listener
+   */
   private function setListener() {
     if ($this->getIsEnable() == 0) {
         $this->removeListener();
@@ -222,8 +258,50 @@ class remoteControl extends eqLogic {
   public function postRemove() {
   }
 
+  /**
+   * Récupérer la valeur attendue spécifique lié à la commande
+   */
+  private function getDefinedValue($_option) {
+    $cmdTrigger = $_option['event_id'];
+
+    // remote 1
+    $cmd = $this->getConfiguration('cmd_remote');
+    $cmd = str_replace('#', '', $cmd);
+    if ($cmd == $cmdTrigger) {
+      return $this->getConfiguration('cmd_value');
+    }
+
+    // remote 2
+    $cmd = $this->getConfiguration('cmd_remote2');
+    $cmd = str_replace('#', '', $cmd);
+    if ($cmd == $cmdTrigger) {
+      return $this->getConfiguration('cmd_value2');
+    }
+
+    // remote 3
+    $cmd = $this->getConfiguration('cmd_remote3');
+    $cmd = str_replace('#', '', $cmd);
+    if ($cmd == $cmdTrigger) {
+      return $this->getConfiguration('cmd_value3');
+    }
+
+    // remote 4
+    $cmd = $this->getConfiguration('cmd_remote4');
+    $cmd = str_replace('#', '', $cmd);
+    if ($cmd == $cmdTrigger) {
+      return $this->getConfiguration('cmd_value4');
+    }
+
+    return null;
+  }
+
+  // --- LAMPE ---
+
+  /**
+   * Gestion d'une lampe
+   */
   public function computeLamp($_option) {
-    log::add(__CLASS__, 'debug', '  computeLamp : '.$this->getHumanName().', commande: '. $_option['value']);
+    log::add(__CLASS__, 'debug', '  '. __FUNCTION__ .' : '.$this->getHumanName().', commande: '. $_option['value']);
 
     $cmd_lamp = $this->getConfiguration('cmd_lamp');
     $cmd_lamp = str_replace('#', '', $cmd_lamp);
@@ -234,7 +312,7 @@ class remoteControl extends eqLogic {
     }
     //log::add(__CLASS__, 'debug', ' cmd_lamp='.$cmd_lamp->getHumanName());
     $eqlogic_lamp = $cmd_lamp->getEqLogic();
-    
+
     // Valeur commande optionnelle
     $cmd_value = $this->getDefinedValue($_option);  //$this->getConfiguration('cmd_value');
 
@@ -315,43 +393,6 @@ class remoteControl extends eqLogic {
 
     log::add(__CLASS__, 'debug', '  commande non gérée');
 
-  }
-
-  /**
-   * Récupérer la valeur attendue spécifique lié à la commande
-   */
-  private function getDefinedValue($_option) {
-    $cmdTrigger = $_option['event_id'];
-
-    // remote 1
-    $cmd = $this->getConfiguration('cmd_remote');
-    $cmd = str_replace('#', '', $cmd);
-    if ($cmd == $cmdTrigger) {
-      return $this->getConfiguration('cmd_value');
-    }
-
-    // remote 2
-    $cmd = $this->getConfiguration('cmd_remote2');
-    $cmd = str_replace('#', '', $cmd);
-    if ($cmd == $cmdTrigger) {
-      return $this->getConfiguration('cmd_value2');
-    }
-
-    // remote 3
-    $cmd = $this->getConfiguration('cmd_remote3');
-    $cmd = str_replace('#', '', $cmd);
-    if ($cmd == $cmdTrigger) {
-      return $this->getConfiguration('cmd_value3');
-    }
-
-    // remote 4
-    $cmd = $this->getConfiguration('cmd_remote4');
-    $cmd = str_replace('#', '', $cmd);
-    if ($cmd == $cmdTrigger) {
-      return $this->getConfiguration('cmd_value4');
-    }
-
-    return null;
   }
 
   /**
@@ -556,8 +597,7 @@ class remoteControl extends eqLogic {
     }
   }
 
-
-    /**
+  /**
    * Modifier la couleur
    */
   private function temperature_color($eqlogic_lamp, $step, $type) {
@@ -668,6 +708,129 @@ class remoteControl extends eqLogic {
     }
   }
 
+  //--- ENERGY ---
+
+  /**
+   * Gestion d'une prise
+   */
+  public function computeOutlet($_option) {
+    log::add(__CLASS__, 'debug', '  '. __FUNCTION__ .' : '.$this->getHumanName().', commande: '. $_option['value']);
+
+    $cmd_lamp = $this->getConfiguration('cmd_lamp');
+    $cmd_lamp = str_replace('#', '', $cmd_lamp);
+    $cmd_lamp = cmd::byId($cmd_lamp);
+    if (!is_object($cmd_lamp)) {
+      log::add(__CLASS__, 'error', ' commande cmd_lamp non trouvé');
+      throw new Exception("cmd_lamp non renseigné");
+    }
+    //log::add(__CLASS__, 'debug', ' cmd_lamp='.$cmd_lamp->getHumanName());
+    $eqlogic_lamp = $cmd_lamp->getEqLogic();
+
+    // Valeur commande optionnelle
+    $cmd_value = $this->getDefinedValue($_option);  //$this->getConfiguration('cmd_value');
+
+    // toggle
+    if (in_array($_option['value'], remoteControl::cmd_toggle_array) || 
+        (!empty($cmd_value) && $_option['value'] == $cmd_value)
+     ) {
+      $this->toggleEnergy($eqlogic_lamp);
+      return;
+    }
+
+    // on
+    if (in_array($_option['value'], remoteControl::cmd_on_array)) {
+      $this->turnOnEnergy($eqlogic_lamp);
+      return;
+    }
+
+    // off
+    if (in_array($_option['value'], remoteControl::cmd_off_array)) {
+      $this->turnOffEnergy($eqlogic_lamp);
+      return;
+    }
+
+    log::add(__CLASS__, 'debug', '  commande non gérée');
+  }
+
+  /**
+   * Toggle une prise
+   */
+  private function toggleEnergy($eqlogic_lamp) {
+    log::add(__CLASS__, 'info', '  action Toogle');
+
+    // // Recherche LIGHT_TOGGLE
+    // $cmd_toggle = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'LIGHT_TOGGLE');
+    // if ($cmd_toggle == null) {
+    //   log::add(__CLASS__, 'error', 'commande LIGHT_TOGGLE non trouvée');
+    //   throw new Exception("commande LIGHT_TOGGLE non trouvée");
+    // } else {
+    //   log::add(__CLASS__, 'debug', '   cmd_toggle='.$cmd_toggle->getHumanName());
+      
+    //   $cmd_toggle->execCmd();
+    //   return;
+    // }
+
+    // Recherche LIGHT_STATE
+    $lamp_state = $this->getStateEnergy($eqlogic_lamp);
+
+    if ($lamp_state == 0) {
+      $this->turnOnEnergy($eqlogic_lamp);
+    } else {
+      $this->turnOffEnergy($eqlogic_lamp);
+    }
+  }
+
+  /**
+   * Allumer une prise
+   */
+  private function turnOnEnergy($eqlogic_lamp) {
+    log::add(__CLASS__, 'info', '  action On');
+
+    // Recherche ENERGY_ON
+    $cmd_lamp_on = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'ENERGY_ON');
+    if ($cmd_lamp_on == null) {
+      log::add(__CLASS__, 'error', '   commande ENERGY_ON non trouvée');
+      throw new Exception("commande ENERGY_ON non trouvée");
+    } else {
+      log::add(__CLASS__, 'debug', '   cmd_lamp_on='.$cmd_lamp_on->getHumanName());
+      $cmd_lamp_on->execCmd();
+    }
+  }
+
+  /**
+   * Eteindre une prise
+   */
+  private function turnOffEnergy($eqlogic_lamp) {
+    log::add(__CLASS__, 'info', '  action Off');
+
+    // Recherche ENERGY_OFF
+    $cmd_lamp_off = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'ENERGY_OFF');
+    if ($cmd_lamp_off == null) {
+      log::add(__CLASS__, 'error', '   commande ENERGY_OFF non trouvée');
+      throw new Exception("commande ENERGY_OFF non trouvée");
+    } else {
+      log::add(__CLASS__, 'debug', '   cmd_lamp_off='.$cmd_lamp_off->getHumanName());
+      $cmd_lamp_off->execCmd();
+    }
+  }
+    
+  /**
+   * Obtient l'état de la prise
+   */
+  private function getStateEnergy($eqlogic_lamp) {
+    $plug_state = 0;
+    $plug_state = cmd::byEqLogicIdAndGenericType($eqlogic_lamp->getId(), 'ENERGY_STATE');
+    if ($plug_state == null) {
+      log::add(__CLASS__, 'error', '   commande ENERGY_STATE non trouvée');      
+      throw new Exception("commande ENERGY_STATE non trouvée");
+    } else {
+      log::add(__CLASS__, 'debug', '   plug_state='.$plug_state->getHumanName());
+      $energy_state = $plug_state->execCmd();
+      log::add(__CLASS__, 'debug', '   lamp_state='.$energy_state);
+    }
+
+    return $energy_state;
+  }
   /*     * **********************Getteur Setteur*************************** */
 
 }
