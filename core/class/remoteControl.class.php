@@ -19,7 +19,7 @@
 require_once __DIR__  . '/../../../../core/php/core.inc.php';
 
 class remoteControl extends eqLogic {
-  const cmd_toggle_array = ['toggle', '0', '1'];  // 0 et 1 pour Enocean
+  const cmd_toggle_array = ['toggle', '0', '1', 'on'];  // 0 et 1 pour Enocean, 'on' pour Button Ikea
   const cmd_on_array = ['on_press'];
   const cmd_off_array = ['off_press'];
   const cmd_brightness_down_array = ['down_press', 'brightness_down_click', 
